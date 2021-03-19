@@ -64,10 +64,9 @@ def horizScan():
             elif x == 2:
                 b += 1
                 a = 0
-    if a >= 4 or b >= 4:
-        return(True)
-    else:
-        return(False)
+            elif a >= 4 or b >= 4:
+                return(True)
+    return(False)
 def diagScan():
     for i in range(3,len(board)):
         for j in board[i]:
