@@ -47,6 +47,25 @@ class triBut:
         l = Text(self.center,self.label)
         but.draw(win)
         l.draw(win)
+
+class sqrBut:
+    def __init__(self, x1, y1, x2, y2, label, color):
+        self.point1 = Point(x1, y1)
+        self.point2 = Point(x2, y2)
+        self.x1, self.y1, self.x2, self.y2 = x1, y1, x2, y2
+        self.label = label
+        self.color = color
+        self.textAnchr = Point(((x2 + x1) / 2 ), ((y2 + y1) / 2 ) )
+
+    def drawBut(self):
+        but= Rectangle(self.point1, self.point2)
+        but.setFill(self.color)
+        label = Text(self.textAnchr, self.label)
+        but.draw(win)
+        label.draw(win)
+    def checkBut(self, x, y):
+        print(self.x1 <= x <= self.x2 and self.y1 <= y <= self.y2)
+        return(self.x1 <= x <= self.x2 and self.y1 <= y <= self.y2)
 def displayBoard():
     print(key)
     for i in board:
@@ -110,11 +129,14 @@ def drawBoard():
     boardBkg = Rectangle(Point(.5,.5),Point(7.5,6.5))
     boardBkg.setFill('blue')
     boardBkg.draw(win)
-    for i in range(6):
-        for j in range(7):
-            x , y = j+1, i+1
+    circList = [[],[],[],[],[],[],[]]
+    for i in range(7):
+        for j in range(6):
+            x , y = i+1, j+1
             z = Circle(Point(x,y),.5)
             z.setFill('white'), z.draw(win)
+            circList[i].append(z)
+    return(circList)
 def createTri():    
     y = 6.9
     triList = []
@@ -130,36 +152,26 @@ def area(x1, y1, x2, y2, x3, y3):
 
 	return abs((x1 * (y2 - y3) + x2 * (y3 - y1) 
 				+ x3 * (y1 - y2)) / 2.0) 
-def isInside(x1, y1, x2, y2, x3, y3, x, y): 
-
-	# Calculate area of triangle ABC 
-	A = area (x1, y1, x2, y2, x3, y3) 
-
-	# Calculate area of triangle PBC 
-	A1 = area (x, y, x2, y2, x3, y3) 
-	
-	# Calculate area of triangle PAC 
-	A2 = area (x1, y1, x, y, x3, y3) 
-	
-	# Calculate area of triangle PAB 
-	A3 = area (x1, y1, x2, y2, x, y) 
-	
-	# Check if sum of A1, A2 and A3 
-	# is same as A 
-	if(A == A1 + A2 + A3): 
-		return True
-	else: 
-		return False
+def pointInTriangle(x1, y1, x2, y2, x3, y3, x, y):
+    denominator = ((y2 - y3)*(x1 - x3) + (x3 - x2)*(y1 - y3))
+    a = ((y2 - y3)*(x - x3) + (x3 - x2)*(y - y3))/denominator
+    b = ((y3 - y1)*(x - x3) + (x1 - x3)*(y - y3))/denominator
+    c = 1 - a - b
+    return 0 <= a and a <= 1 and 0 <= b and b <= 1 and 0 <= c and c <= 1
+    #Barycentric Way to check if a point is in a triangle 
 def tributcheck(x,y,triList):
     for i in range(len(triList)):
-        if isInside(triList[i].x1, triList[i].x2, triList[i].x3, triList[i].y1, triList[i].y2, triList[i].y3, x, y):
+        if pointInTriangle(triList[i].x1, triList[i].y1, triList[i].x2, triList[i].y2, triList[i].x3, triList[i].y3, x, y):
             return(True, i)
-        else:
-            return(False)
-   
+    return(False)   
+
 def main():
-    drawBoard()
+    circList = drawBoard()
     triList = createTri()
+    exitBut = sqrBut(7.5,6.5,8,7,'EXIT', 'red')
+    exitBut.drawBut()
+    test = triList[0]
+    print(test.x1, test.x2, test.x3, test.y1, test.y2, test.y3)
     
     '''
     print('Welcome to Connect 4!')
@@ -193,9 +205,16 @@ def main():
         file = open('Game Records.txt','a')
         file.write(f'*******\n {wintime}\n{displayBoard()}\nStalemate\n*******\n')'''
     click = Point(0,0)
-    while tributcheck(click.getX(),click.getY(),triList) == False:
+
+    while checkWin() == False or c == ((len(board)*len(board[0]))):
+        if exitBut.checkBut(click.getX(),click.getY()) == True:
+            break
         click = win.getMouse()
         print(f'x = {click.getX()}, y = {click.getY()}')
+    '''while tributcheck(click.getX(),click.getY(),triList) == False:
+        click = win.getMouse()
+        print(f'x = {click.getX()}, y = {click.getY()}')
+        print(tributcheck(click.getX(),click.getY(),triList))'''
     win.close()
 
 main()
