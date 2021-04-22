@@ -12,7 +12,7 @@ board =[[0,0,0,0,0,0,0],
 key = []
 for i in range(len(board)+1):
     key.append(i + 1)
-
+7
 class triBut:
     def __init__(self, x1, x2, x3, y1, y2, y3, label, color):
         self.x1, self.x2, self.x3 = x1, x2, x3
@@ -143,10 +143,10 @@ def drawEmptyBoard():
     circList = [[],[],[],[],[],[],[]]
     for i in range(len(board)):
         for j in range(len(board[0])):
-            x , y = j+1, i+1
-            z = Circle(Point(x,y),.45)
-            z.setFill('white'), z.draw(win)
-            circList[i].append(z)
+            x , y = j+1, 6-i
+            tempCircle = Circle(Point(x,y),.45)
+            tempCircle.setFill('white'), tempCircle.draw(win)
+            circList[i].append(tempCircle)
     return(circList)#initializes graphical board 
 def createTri():    
     y = 6.9
@@ -270,5 +270,3 @@ def main():
     win.close()
 
 main()
-        
-
