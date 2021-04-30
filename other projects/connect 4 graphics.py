@@ -100,8 +100,9 @@ def vertScan():
             elif y[x] == 2:
                 b+=1
                 a=0     
-    if a >= 4 or b >= 4:
-        return(True)
+            if a >= 4 or b >= 4:
+                print('vertical win')
+                return(True)
     else:
         return(False)#searches vertically for a win
 def horizScan():
@@ -115,6 +116,7 @@ def horizScan():
                 b += 1
                 a = 0
             elif a >= 4 or b >= 4:
+                print('horizontal win')
                 return(True)
     return(False)#searches horizontally for a win
 def diagScan():
@@ -122,13 +124,17 @@ def diagScan():
         for j in board[i]:
             if j <= (len(board[0])/2):  #righthand checks
                 if board[i][j] == 1 and board[i-1][j+1] ==1 and board[i-2][j+2] == 1 and board[i-3][j+3] == 1:
+                    print('diagonal win')
                     return(True)  
                 elif board[i][j] == 2 and board[i-1][j+1] == 2 and board[i-2][j+2] == 2 and board[i-3][j+3] == 2 :
+                    print('diagonal win')
                     return(True) 
             if j >= (len(board[0])/2): #lefthand checks    
                 if board[i][j] == 1 and board[i-1][j-1] ==1 and board[i-2][j-2] == 1 and board[i-3][j-3] == 1:
+                    print('diagonal win')
                     return(True)
                 elif board[i][j] == 2 and board[i-1][j-1] == 2 and board[i-2][j-2] == 2 and board[i-3][j-3] == 2:
+                    print('diagonal win')
                     return(True)
     return(False)#searches diagonally for a win
 def checkWin():
@@ -208,36 +214,19 @@ def main():
     clickdone.undrawTxt()
     entry.undraw()
     if plyr1 == '':
-        plyr1 == 'Black'
+        plyr1 = 'Black'
     if plyr2 == '':
-        plyr2 == 'Red'
-    currentPlayerName = 0
+        plyr2 = 'Red'
+    playerNameList = ['null', plyr1, plyr2]
+    currentPlayerName = 1
+    turnDisplayPlyr1 = screenTxt(f"{plyr1}'s turn", 4,.15, 3,0, 5,.5, 'light blue')
+    turnDisplayPlyr1.drawTxt
+    turnDisplayPlyr2 = screenTxt(f"{plyr2}'s turn", 4,.15, 3,0, 5,.5, 'light blue')
     turn = False
     currentPlayer = 0
     printBoard()
     c = 0
-    '''while not checkWin() or c == ((len(board)*len(board[0]))):
-        turn = not turn
-        if turn:
-            currentPlayer=1
-            currentPlayerName = plyr1
-        else:
-            currentPlayer=2
-            currentPlayerName = plyr2
-        col = (int(input(f'{currentPlayerName}: pick a column: '))-1)
-        place(col,currentPlayer)
-        printBoard()
-        c+=1
-        checkWin()
-    wintime = datetime.datetime.now()
-    if c != ((len(board)*len(board[0]))):
-        print(f'{currentPlayerName} wins!')
-        file = open('Game Records.txt','a')
-        file.write(f'*******\n {wintime}\n{printBoard()}\n{currentPlayerName} wins!\n*******\n')
-    elif c == ((len(board)*len(board[0]))) and not checkWin():
-        print('Stalemate!')
-        file = open('Game Records.txt','a')
-        file.write(f'*******\n {wintime}\n{printBoard()}\nStalemate\n*******\n')'''
+
     click = Point(0,0)
     gameWon = checkWin()
     while gameWon == False or c == ((len(board)*len(board[0]))):
@@ -256,17 +245,41 @@ def main():
             columnChoice = tributcheck(click.getX(),click.getY(), triList)[1]
             place(columnChoice, currentPlayer )
             drawBoardstate(board, circList)
+            if currentPlayer == 2:
+                try: 
+                    turnDisplayPlyr2.undrawTxt()
+                except:
+                    pass
+                turnDisplayPlyr1.drawTxt()
+            elif currentPlayer == 1:
+                try: 
+                    turnDisplayPlyr1.undrawTxt()
+                except:
+                    pass
+                turnDisplayPlyr2.drawTxt()
             printBoard()
             gameWon = checkWin()
+            if gameWon:
+                break
             print(f'gameWon = {gameWon}\n')
+            c += 0
         click = win.getMouse()
 
         
         print(f'x = {click.getX()}, y = {click.getY()}')
     
+    
+    if c != ((len(board)*len(board[0]))):
+        print(f'{currentPlayerName} wins!')
+        winBanner = screenTxt(f'{currentPlayerName} Wins!\n\nClick to Exit', 4, 4, 2.5, 2.5, 5.5, 4.5, 'beige')
+        winBanner.drawTxt()
+    elif c == ((len(board)*len(board[0]))) and not checkWin():
+        print('Stalemate!')
+        staleBanner = screenTxt('Stalemate!\n\nClick to Exit',  4, 4, 2.5, 2.5, 5.5, 4.5, 'beige')
+        staleBanner.drawTxt()
+
         
-        
-        
+    win.getMouse()
     win.close()
 
 main()
